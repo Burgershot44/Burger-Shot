@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rasca y Gana</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: auto; }
+    input { padding: 8px; width: 100%; margin-bottom: 10px; }
+    button { padding: 10px; margin-top: 5px; width: 100%; }
+    .prize { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Rasca y Gana</h1>
+  <input type="text" id="codeInput" placeholder="Introduce tu código" />
+  <button onclick="addCode()">Añadir participación</button>
+  <p>Participaciones: <span id="points">0</span></p>
+  <button onclick="scratch()">Rasca aquí</button>
+  <div class="prize" id="lastPrize"></div>
+
+  <script>
+    const validCodes = new Set([
+      "PROMO-8D2F", "PROMO-3A1B", "PROMO-9F4C", "PROMO-7B0E" // ... añade todos los demás códigos aquí
+    ]);
+
+    let points = 0;
+    let prizes = {
+      "Combo XXL": 1,
+      "Combo XL": 2,
+      "Combo medio": 4,
+      "Combo mini": 6,
+      "Monchi": 15,
+      "Clipper": 15,
+      "Patatas": 15,
+      "Sin premio": 44
+    };
+
+    function addCode() {
+      const code = document.getElementById('codeInput').value.trim();
+      if (validCodes.has(code)) {
+        points++;
+        validCodes.delete(code);
+        document.getElementById('points').textContent = points;
+      } else {
+        alert("Código inválido o ya usado");
+      }
+      document.getElementById('codeInput').value = '';
+    }
+
+    function scratch() {
+      if (points <= 0) {
+        alert("No tienes participaciones");
+        return;
+      }
+
+      let prizeList = [];
+      for (let [name, qty] of Object.entries(prizes)) {
+        for (let i = 0; i < qty; i++) {
+          prizeList.push(name);
+        }
+      }
+
+      if (prizeList.length === 0) {
+        alert("Ya no quedan premios");
+        return;
+      }
+
+      const randomPrize = prizeList[Math.floor(Math.random() * prizeList.length)];
+      prizes[randomPrize]--;
+      points--;
+      document.getElementById('points').textContent = points;
+      document.getElementById('lastPrize').textContent = `¡Te ha tocado: ${randomPrize}!`;
+    }
+  </script>
+</body>
+</html>
